@@ -1,0 +1,10 @@
+redash.example.com {
+    reverse_proxy server:5000
+
+    # Uncomment the following line to enable TLS
+    #tls /root/certs/cert.crt /root/certs/cert.key
+
+    log {
+        level error
+    }
+}

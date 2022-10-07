@@ -1,0 +1,85 @@
+---
+version: "2.2"
+x-redash-service: &redash-service
+  depends_on:
+    - postgres
+    - redis
+  # Comment below if you want to add your own certificate. See the comment below for more instructions.
+  image: redash/redash:10.1.0.b50633
+  # # Uncomment below if you want to add your own certificate to the redash imafge for connecting to services that need it (LDAPS, SMTPS, etc)
+  # build:
+  #   context: .
+  #   dockerfile: Dockerfile
+  env_file:
+    - env/redash.env
+  restart: unless-stopped
+
+services:
+  server:
+    <<: *redash-service
+    command: server
+    environment:
+      REDASH_WEB_WORKERS: 4
+    ports:
+      - "5000:5000"
+
+  scheduler:
+    <<: *redash-service
+    command: scheduler
+    environment:
+      QUEUES: "celery"
+      WORKERS_COUNT: 1
+    depends_on:
+      - server
+
+  scheduled_worker:
+    <<: *redash-service
+    command: worker
+    depends_on:
+      - server
+    environment:
+      QUEUES: "scheduled_queries,schemas"
+      WORKERS_COUNT: 1
+
+  adhoc_worker:
+    <<: *redash-service
+    command: worker
+    depends_on:
+      - server
+    environment:
+      QUEUES: "queries"
+      WORKERS_COUNT: 2
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redash-redis-data:/data
+
+  postgres:
+    image: postgres:14-alpine
+    env_file:
+      - env/postgres.env
+    restart: unless-stopped
+    volumes:
+      - redash-postgres-data:/var/lib/postgresql/data
+
+  caddy:
+    image: caddy:2-alpine
+    depends_on:
+      - server
+    ports:
+      - "80:80" # redirect HTTP to HTTPS
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      # # Uncomment below for your own SSL certificates
+      # - ./caddy/cert.cert:/etc/caddy/cert.cert
+      # - ./caddy/cert.key:/etc/caddy/cert.key
+
+volumes:
+  redash-postgres-data:
+    driver: local
+  redash-redis-data:
+    driver: local
