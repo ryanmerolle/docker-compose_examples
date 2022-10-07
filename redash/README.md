@@ -1,5 +1,13 @@
 # Redash
 
+## Intro
+
+Useful application for creating quick dashboards for your database using simple sql.
+
+See all of its [integrations](https://redash.io/integrations).
+
+Lastly, unlike many low code tools, it supports SSO, LDAP, & alerting in the free/open source version.
+
 ## Getting Started
 
 ### Production Variable Changes Required
