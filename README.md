@@ -53,3 +53,6 @@ Lastly, unlike many low code tools, it supports SSO, LDAP, & alerting in the fre
 - [Awesome OSS Alternatives](https://github.com/RunaCapital/awesome-oss-alternatives)
 - [Awesome Selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
 - [Awesome Network Automation](https://github.com/networktocode/awesome-network-automation)
+- [requests-baskes](https://github.com/darklynx/request-baskets)
+- [mockbin](https://github.com/Kong/mockbin)
+- [webhook.site](https://github.com/webhooksite/webhook.site)
